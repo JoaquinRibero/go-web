@@ -1,11 +1,13 @@
 package transactions
 
+import "github.com/JoaquinRibero/go-web/internal/domain"
+
 type Service interface {
-	GetAll() []Transaction
-	NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []Transaction
-	Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (Transaction, error)
+	GetAll() []domain.Transaction
+	NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []domain.Transaction
+	Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error)
 	Delete(id int) error
-	UpdateCodigoAndMonto(id int, codigo string, monto int) (Transaction, error)
+	UpdateCodigoAndMonto(id int, codigo string, monto int) (domain.Transaction, error)
 }
 
 type service struct {
@@ -18,17 +20,17 @@ func NewService(s Repository) Service {
 	}
 }
 
-func (s *service) GetAll() []Transaction {
+func (s *service) GetAll() []domain.Transaction {
 	ts := s.repo.GetAll()
 	return ts
 }
 
-func (s *service) NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []Transaction {
+func (s *service) NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []domain.Transaction {
 	ts := s.repo.NewUser(codigo, moneda, monto, emisor, receptor, fecha)
 	return ts
 }
 
-func (s *service) Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (Transaction, error) {
+func (s *service) Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error) {
 	t, err := s.repo.Update(id, codigo, moneda, monto, emisor, receptor, fecha)
 	return t, err
 }
@@ -38,7 +40,7 @@ func (s *service) Delete(id int) error {
 	return err
 }
 
-func (s *service) UpdateCodigoAndMonto(id int, codigo string, monto int) (Transaction, error) {
+func (s *service) UpdateCodigoAndMonto(id int, codigo string, monto int) (domain.Transaction, error) {
 	t, err := s.repo.UpdateCodigoAndMonto(id, codigo, monto)
 	return t, err
 }

@@ -2,6 +2,8 @@ package transactions
 
 import (
 	"fmt"
+
+	"github.com/JoaquinRibero/go-web/internal/domain"
 )
 
 type Transaction struct {
@@ -15,14 +17,14 @@ type Transaction struct {
 	Estado   bool   `json:"estado"`
 }
 
-var transactions []Transaction
+var transactions []domain.Transaction
 
 type Repository interface {
-	GetAll() []Transaction
-	NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []Transaction
-	Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (Transaction, error)
+	GetAll() []domain.Transaction
+	NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []domain.Transaction
+	Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error)
 	Delete(id int) error
-	UpdateCodigoAndMonto(id int, codigo string, monto int) (Transaction, error)
+	UpdateCodigoAndMonto(id int, codigo string, monto int) (domain.Transaction, error)
 }
 
 type repository struct{}
@@ -31,8 +33,8 @@ func NewRepository() Repository {
 	return &repository{}
 }
 
-func (repo *repository) GetAll() []Transaction {
-	t1 := Transaction{
+func (repo *repository) GetAll() []domain.Transaction {
+	t1 := domain.Transaction{
 		Id:       1,
 		Codigo:   "afasfa",
 		Moneda:   "dolar",
@@ -46,16 +48,16 @@ func (repo *repository) GetAll() []Transaction {
 	return transactions
 }
 
-func (repo *repository) NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []Transaction {
+func (repo *repository) NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []domain.Transaction {
 	lastId := len(transactions)
 	id := lastId + 1
-	t := Transaction{id, codigo, moneda, monto, emisor, receptor, fecha, true}
+	t := domain.Transaction{id, codigo, moneda, monto, emisor, receptor, fecha, true}
 	transactions = append(transactions, t)
 	return transactions
 }
 
-func (repo *repository) Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (Transaction, error) {
-	t := Transaction{
+func (repo *repository) Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error) {
+	t := domain.Transaction{
 		Codigo:   codigo,
 		Moneda:   moneda,
 		Monto:    monto,
@@ -72,7 +74,7 @@ func (repo *repository) Update(id int, codigo string, moneda string, monto int, 
 		}
 	}
 	if !updated {
-		return Transaction{}, fmt.Errorf("transacción %d not found", id)
+		return domain.Transaction{}, fmt.Errorf("transacción %d not found", id)
 	}
 	return t, nil
 }
@@ -91,8 +93,8 @@ func (repo *repository) Delete(id int) error {
 	return nil
 }
 
-func (repo *repository) UpdateCodigoAndMonto(id int, codigo string, monto int) (Transaction, error) {
-	var t Transaction
+func (repo *repository) UpdateCodigoAndMonto(id int, codigo string, monto int) (domain.Transaction, error) {
+	var t domain.Transaction
 	updated := false
 	for i := range transactions {
 		if transactions[i].Id == id {
@@ -103,7 +105,7 @@ func (repo *repository) UpdateCodigoAndMonto(id int, codigo string, monto int) (
 		}
 	}
 	if !updated {
-		return Transaction{}, fmt.Errorf("transaccion %d no encontrada", id)
+		return domain.Transaction{}, fmt.Errorf("transaccion %d no encontrada", id)
 	}
 	return t, nil
 }
