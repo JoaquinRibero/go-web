@@ -27,6 +27,15 @@ func Mensaje(verr validator.ValidationErrors) map[string]string {
 	return errs
 }
 
+func (t *Transaction) ValidateToken() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		token := ctx.GetHeader("token")
+		if token != "joaquin" {
+			ctx.JSON(401, gin.H{"errors": "no tiene permisos para realizar la peticion solicitada"})
+		}
+	}
+}
+
 func (c *Transaction) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		t := c.service.GetAll()
@@ -51,6 +60,9 @@ func (c *Transaction) NewUser() gin.HandlerFunc {
 				ctx.JSON(400, gin.H{"errors": Mensaje(verr)})
 				return
 			}
+		} else {
+			t := c.service.NewUser(req.Codigo, req.Moneda, req.Monto, req.Emisor, req.Receptor, req.Fecha)
+			ctx.JSON(200, t)
 		}
 
 	}

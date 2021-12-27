@@ -12,7 +12,8 @@ func main() {
 	t := controller.NewTransaction(service)
 
 	r := gin.Default()
-	tr := r.Group("/transactions", t.GetAll())
-	tr.GET("/")
+	tr := r.Group("/transactions", t.ValidateToken())
+	tr.GET("/", t.GetAll())
+	tr.POST("/new", t.NewUser())
 	r.Run()
 }
