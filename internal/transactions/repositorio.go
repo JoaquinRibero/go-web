@@ -7,8 +7,6 @@ import (
 	"github.com/JoaquinRibero/go-web/pkg/store"
 )
 
-var transactions []domain.Transaction
-
 type Repository interface {
 	GetAll() []domain.Transaction
 	NewUser(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) ([]domain.Transaction, error)
@@ -54,7 +52,7 @@ func (repo *repository) NewUser(id int, codigo string, moneda string, monto int,
 	if err := repo.db.Write(ts); err != nil {
 		return []domain.Transaction{}, err
 	}
-	return transactions, nil
+	return ts, nil
 }
 
 func (repo *repository) Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error) {
@@ -67,46 +65,61 @@ func (repo *repository) Update(id int, codigo string, moneda string, monto int, 
 		Fecha:    fecha,
 	}
 	updated := false
-	for i := range transactions {
-		if transactions[i].Id == id {
+	var ts []domain.Transaction
+	repo.db.Read(&ts)
+	for i := range ts {
+		if ts[i].Id == id {
 			t.Id = id
-			transactions[i] = t
+			ts[i] = t
 			updated = true
 		}
 	}
 	if !updated {
 		return domain.Transaction{}, fmt.Errorf("transacción %d not found", id)
 	}
+	if err := repo.db.Write(ts); err != nil {
+		return domain.Transaction{}, err
+	}
 	return t, nil
 }
 
 func (repo *repository) Delete(id int) error {
 	deleted := false
-	for i := range transactions {
-		if transactions[i].Id == id {
+	var ts []domain.Transaction
+	repo.db.Read(&ts)
+	for i := range ts {
+		if ts[i].Id == id {
 			deleted = true
 		}
 	}
 	if !deleted {
 		return fmt.Errorf("transaccion %d no encontrado", id)
 	}
-	transactions[id].Estado = false
+	ts[id].Estado = false
+	if err := repo.db.Write(ts); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (repo *repository) UpdateCodigoAndMonto(id int, codigo string, monto int) (domain.Transaction, error) {
 	var t domain.Transaction
 	updated := false
-	for i := range transactions {
-		if transactions[i].Id == id {
-			transactions[i].Codigo = codigo
-			transactions[i].Monto = monto
+	var ts []domain.Transaction
+	repo.db.Read(&ts)
+	for i := range ts {
+		if ts[i].Id == id {
+			ts[i].Codigo = codigo
+			ts[i].Monto = monto
 			updated = true
-			t = transactions[i]
+			t = ts[i]
 		}
 	}
 	if !updated {
 		return domain.Transaction{}, fmt.Errorf("transaccion %d no encontrada", id)
+	}
+	if err := repo.db.Write(ts); err != nil {
+		return domain.Transaction{}, err
 	}
 	return t, nil
 }
