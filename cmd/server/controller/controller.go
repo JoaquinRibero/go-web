@@ -46,12 +46,12 @@ func (c *Transaction) GetAll() gin.HandlerFunc {
 func (c *Transaction) NewUser() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		type request struct {
-			Codigo   string `json:"codigo"`
-			Moneda   string `json:"moneda"`
-			Monto    int    `json:"monto"`
-			Emisor   string `json:"emisor"`
-			Receptor string `json:"receptor"`
-			Fecha    string `json:"fecha"`
+			Codigo   string `json:"codigo" binding:"required"`
+			Moneda   string `json:"moneda" binding:"required"`
+			Monto    int    `json:"monto" binding:"required"`
+			Emisor   string `json:"emisor" binding:"required"`
+			Receptor string `json:"receptor" binding:"required"`
+			Fecha    string `json:"fecha" binding:"required"`
 		}
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
