@@ -1,13 +1,22 @@
 package main
 
 import (
+	"log"
+
 	"github.com/JoaquinRibero/go-web/cmd/server/controller"
 	"github.com/JoaquinRibero/go-web/internal/transactions"
+	"github.com/JoaquinRibero/go-web/pkg/store"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	repo := transactions.NewRepository()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("error al intentar obtener las variables de entorno")
+	}
+	db := store.New(store.FileType, "transactions.json")
+	repo := transactions.NewRepository(db)
 	service := transactions.NewService(repo)
 	t := controller.NewTransaction(service)
 

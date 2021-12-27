@@ -3,6 +3,7 @@ package controller
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/JoaquinRibero/go-web/internal/transactions"
@@ -31,7 +32,8 @@ func Mensaje(verr validator.ValidationErrors) map[string]string {
 func (t *Transaction) ValidateToken() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.GetHeader("token")
-		if token != "joaquin" {
+		tokenEnv := os.Getenv("TOKEN")
+		if token != tokenEnv {
 			ctx.JSON(401, gin.H{"errors": "no tiene permisos para realizar la peticion solicitada"})
 		}
 	}
@@ -62,7 +64,10 @@ func (c *Transaction) NewUser() gin.HandlerFunc {
 				return
 			}
 		} else {
-			t := c.service.NewUser(req.Codigo, req.Moneda, req.Monto, req.Emisor, req.Receptor, req.Fecha)
+			t, err := c.service.NewUser(req.Codigo, req.Moneda, req.Monto, req.Emisor, req.Receptor, req.Fecha)
+			if err != nil {
+				ctx.JSON(401, gin.H{"error": err.Error()})
+			}
 			ctx.JSON(200, t)
 		}
 

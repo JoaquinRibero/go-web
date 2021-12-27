@@ -4,56 +4,57 @@ import (
 	"fmt"
 
 	"github.com/JoaquinRibero/go-web/internal/domain"
+	"github.com/JoaquinRibero/go-web/pkg/store"
 )
-
-type Transaction struct {
-	Id       int    `json:"_id"`
-	Codigo   string `json:"codigo"`
-	Moneda   string `json:"moneda"`
-	Monto    int    `json:"monto"`
-	Emisor   string `json:"emisor"`
-	Receptor string `json:"receptor"`
-	Fecha    string `json:"fecha"`
-	Estado   bool   `json:"estado"`
-}
 
 var transactions []domain.Transaction
 
 type Repository interface {
 	GetAll() []domain.Transaction
-	NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []domain.Transaction
+	NewUser(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) ([]domain.Transaction, error)
 	Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error)
 	Delete(id int) error
 	UpdateCodigoAndMonto(id int, codigo string, monto int) (domain.Transaction, error)
+	LastId() (int, error)
 }
 
-type repository struct{}
+type repository struct {
+	db store.Store
+}
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db store.Store) Repository {
+	return &repository{
+		db: db,
+	}
 }
 
 func (repo *repository) GetAll() []domain.Transaction {
-	t1 := domain.Transaction{
-		Id:       1,
-		Codigo:   "afasfa",
-		Moneda:   "dolar",
-		Monto:    1500,
-		Emisor:   "Pepito",
-		Receptor: "Juancito",
-		Fecha:    "2021-12-23",
-		Estado:   true,
-	}
-	transactions = append(transactions, t1)
-	return transactions
+	var ts []domain.Transaction
+	repo.db.Read(&ts)
+	return ts
 }
 
-func (repo *repository) NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) []domain.Transaction {
-	lastId := len(transactions)
-	id := lastId + 1
+func (repo *repository) LastId() (int, error) {
+	var ts []domain.Transaction
+	if err := repo.db.Read(&ts); err != nil {
+		return 0, err
+	}
+	if len(ts) == 0 {
+		return 0, nil
+	}
+	return ts[len(ts)-1].Id, nil
+}
+
+func (repo *repository) NewUser(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) ([]domain.Transaction, error) {
+
+	var ts []domain.Transaction
+	repo.db.Read(&ts)
 	t := domain.Transaction{id, codigo, moneda, monto, emisor, receptor, fecha, true}
-	transactions = append(transactions, t)
-	return transactions
+	ts = append(ts, t)
+	if err := repo.db.Write(ts); err != nil {
+		return []domain.Transaction{}, err
+	}
+	return transactions, nil
 }
 
 func (repo *repository) Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error) {
