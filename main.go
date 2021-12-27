@@ -15,5 +15,7 @@ func main() {
 	tr := r.Group("/transactions", t.ValidateToken())
 	tr.GET("/", t.GetAll())
 	tr.POST("/new", t.NewUser())
+	tr.PUT("/:id", t.Update())
+	tr.PATCH("/:id", t.UpdatePartial())
 	r.Run()
 }
