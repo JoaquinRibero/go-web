@@ -1,0 +1,20 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Transactions API ML Bootcamp GO",
+        "title": "MELI Bootcamp API",
+        "contact": {
+            "name": "API Support",
+            "email": "joaquin.ribero@mercadolibre.com"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/transactions/",
+    "paths": {},
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}

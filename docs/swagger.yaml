@@ -1,0 +1,14 @@
+basePath: /transactions/
+host: localhost:8080
+info:
+  contact:
+    email: joaquin.ribero@mercadolibre.com
+    name: API Support
+  description: Transactions API ML Bootcamp GO
+  title: MELI Bootcamp API
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
