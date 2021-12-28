@@ -1,0 +1,32 @@
+[
+ {
+  "_id": 1,
+  "codigo": "transacción 3",
+  "moneda": "peso",
+  "monto": 1500,
+  "emisor": "joaquin",
+  "receptor": "bootcamp",
+  "fecha": "2021-12-21T00:00:00",
+  "estado": true
+ },
+ {
+  "_id": 2,
+  "codigo": "transacción 2",
+  "moneda": "peso",
+  "monto": 13456,
+  "emisor": "joaquin",
+  "receptor": "tony stark",
+  "fecha": "2021-12-21T00:00:00",
+  "estado": true
+ },
+ {
+  "_id": 3,
+  "codigo": "transacción 3",
+  "moneda": "peso",
+  "monto": 78956,
+  "emisor": "steve rogers",
+  "receptor": "tony stark",
+  "fecha": "2021-12-21T00:00:00",
+  "estado": true
+ }
+]
