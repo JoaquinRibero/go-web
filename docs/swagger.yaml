@@ -1,4 +1,15 @@
 basePath: /transactions/
+definitions:
+  web.Response:
+    properties:
+      code:
+        type: string
+      data: {}
+      error:
+        items:
+          type: string
+        type: array
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -7,7 +18,85 @@ info:
   description: Transactions API ML Bootcamp GO
   title: MELI Bootcamp API
   version: "1.0"
-paths: {}
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: get all transactions
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: List Transactions
+      tags:
+      - Transactions
+  /new:
+    post:
+      consumes:
+      - application/json
+      description: add new transactions
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: codigo
+        in: body
+        name: codigo
+        required: true
+        schema:
+          type: string
+      - description: moneda
+        in: body
+        name: moneda
+        required: true
+        schema:
+          type: string
+      - description: monto
+        in: body
+        name: monto
+        required: true
+        schema:
+          type: integer
+      - description: emisor
+        in: body
+        name: emisor
+        required: true
+        schema:
+          type: string
+      - description: receptor
+        in: body
+        name: receptor
+        required: true
+        schema:
+          type: string
+      - description: fecha
+        in: body
+        name: fecha
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: Add Transaction
+      tags:
+      - Transactions
 securityDefinitions:
   BasicAuth:
     type: basic

@@ -48,6 +48,15 @@ func (t *Transaction) ValidateToken() gin.HandlerFunc {
 	}
 }
 
+// ListTransactions godoc
+// @Summary List Transactions
+// @Tags Transactions
+// @Description get all transactions
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Success 200 {object} web.Response
+// @Router / [get]
 func (c *Transaction) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		t := c.service.GetAll()
@@ -55,6 +64,20 @@ func (c *Transaction) GetAll() gin.HandlerFunc {
 	}
 }
 
+// @Summary Add Transaction
+// @Tags Transactions
+// @Description add new transactions
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param codigo body string true "codigo"
+// @Param moneda body string true "moneda"
+// @Param monto body int true "monto"
+// @Param emisor body string true "emisor"
+// @Param receptor body string true "receptor"
+// @Param fecha body string true "fecha"
+// @Success 200 {object} web.Response
+// @Router /new [post]
 func (c *Transaction) NewUser() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		type request struct {
