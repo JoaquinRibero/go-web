@@ -72,7 +72,7 @@ func (t *Transaction) ValidateToken() gin.HandlerFunc {
 func (c *Transaction) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		t := c.service.GetAll()
-		ctx.JSON(200, web.NewResponse(200, t, []string{""}))
+		ctx.JSON(200, web.NewResponse(200, t, nil))
 	}
 }
 
@@ -110,9 +110,9 @@ func (c *Transaction) NewUser() gin.HandlerFunc {
 		} else {
 			t, err := c.service.NewUser(req.Codigo, req.Moneda, req.Monto, req.Emisor, req.Receptor, req.Fecha)
 			if err != nil {
-				ctx.JSON(401, web.NewResponse(401, nil, []string{err.Error()}))
+				ctx.JSON(401, web.NewResponse(401, nil, err.Error()))
 			}
-			ctx.JSON(200, web.NewResponse(200, t, []string{}))
+			ctx.JSON(200, web.NewResponse(200, t, nil))
 		}
 
 	}
@@ -153,15 +153,15 @@ func (c *Transaction) Update() gin.HandlerFunc {
 		}
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(400, web.NewResponse(400, nil, []string{"invalid ID"}))
+			ctx.JSON(400, web.NewResponse(400, nil, "invalid ID"))
 			return
 		}
 
 		t, err := c.service.Update(int(id), req.Codigo, req.Moneda, req.Monto, req.Emisor, req.Receptor, req.Fecha)
 		if err != nil {
-			ctx.JSON(404, web.NewResponse(404, nil, []string{err.Error()}))
+			ctx.JSON(404, web.NewResponse(404, nil, err.Error()))
 		}
-		ctx.JSON(200, web.NewResponse(200, t, []string{}))
+		ctx.JSON(200, web.NewResponse(200, t, nil))
 	}
 }
 
@@ -169,14 +169,14 @@ func (t *Transaction) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(400, web.NewResponse(400, nil, []string{"invalid ID"}))
+			ctx.JSON(400, web.NewResponse(400, nil, "invalid ID"))
 			return
 		}
 		err = t.service.Delete(int(id))
 		if err != nil {
-			ctx.JSON(404, web.NewResponse(404, nil, []string{err.Error()}))
+			ctx.JSON(404, web.NewResponse(404, nil, err.Error()))
 		}
-		ctx.JSON(200, web.NewResponse(200, nil, []string{}))
+		ctx.JSON(200, web.NewResponse(200, nil, nil))
 	}
 }
 
@@ -196,13 +196,13 @@ func (t *Transaction) UpdatePartial() gin.HandlerFunc {
 		}
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(400, web.NewResponse(400, nil, []string{"invalid ID"}))
+			ctx.JSON(400, web.NewResponse(400, nil, "invalid ID"))
 			return
 		}
 		t, err := t.service.UpdateCodigoAndMonto(int(id), req.Codigo, req.Monto)
 		if err != nil {
-			ctx.JSON(404, web.NewResponse(404, nil, []string{err.Error()}))
+			ctx.JSON(404, web.NewResponse(404, nil, err.Error()))
 		}
-		ctx.JSON(200, web.NewResponse(200, t, []string{}))
+		ctx.JSON(200, web.NewResponse(200, t, nil))
 	}
 }
