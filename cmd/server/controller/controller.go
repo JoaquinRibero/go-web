@@ -49,11 +49,11 @@ func (t *Transaction) ValidateToken() gin.HandlerFunc {
 		token := ctx.GetHeader("token")
 		tokenEnv := os.Getenv("TOKEN")
 		if token == "" {
-			ctx.AbortWithStatusJSON(401, gin.H{"error": "API token is required"})
+			ctx.AbortWithStatusJSON(401, web.NewResponse(401, nil, "API token is required"))
 			return
 		}
 		if token != tokenEnv {
-			ctx.AbortWithStatusJSON(401, gin.H{"errors": "Unauthorized. Please add a valid API token"})
+			ctx.AbortWithStatusJSON(401, web.NewResponse(401, nil, "Unauthorized. Please add a valid API token"))
 			return
 		}
 		ctx.Next()
