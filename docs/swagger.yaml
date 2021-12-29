@@ -40,6 +40,68 @@ paths:
       summary: List Transactions
       tags:
       - Transactions
+  /{id}:
+    put:
+      consumes:
+      - application/json
+      description: update full transaction
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: codigo
+        in: body
+        name: codigo
+        required: true
+        schema:
+          type: string
+      - description: moneda
+        in: body
+        name: moneda
+        required: true
+        schema:
+          type: string
+      - description: monto
+        in: body
+        name: monto
+        required: true
+        schema:
+          type: integer
+      - description: emisor
+        in: body
+        name: emisor
+        required: true
+        schema:
+          type: string
+      - description: receptor
+        in: body
+        name: receptor
+        required: true
+        schema:
+          type: string
+      - description: fecha
+        in: body
+        name: fecha
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: Update Transaction
+      tags:
+      - Transactions
   /new:
     post:
       consumes:
