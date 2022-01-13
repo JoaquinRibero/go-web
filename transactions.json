@@ -18,15 +18,5 @@
   "receptor": "tony stark",
   "fecha": "2021-12-21T00:00:00",
   "estado": true
- },
- {
-  "_id": 3,
-  "codigo": "transacción 3",
-  "moneda": "peso",
-  "monto": 78956,
-  "emisor": "steve rogers",
-  "receptor": "tony stark",
-  "fecha": "2021-12-21T00:00:00",
-  "estado": true
  }
 ]

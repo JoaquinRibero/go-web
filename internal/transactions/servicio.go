@@ -3,8 +3,8 @@ package transactions
 import "github.com/JoaquinRibero/go-web/internal/domain"
 
 type Service interface {
-	GetAll() []domain.Transaction
-	NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) ([]domain.Transaction, error)
+	GetAll() ([]domain.Transaction, error)
+	NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error)
 	Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error)
 	Delete(id int) error
 	UpdateCodigoAndMonto(id int, codigo string, monto int) (domain.Transaction, error)
@@ -20,15 +20,18 @@ func NewService(s Repository) Service {
 	}
 }
 
-func (s *service) GetAll() []domain.Transaction {
-	ts := s.repo.GetAll()
-	return ts
+func (s *service) GetAll() ([]domain.Transaction, error) {
+	ts, err := s.repo.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return ts, nil
 }
 
-func (s *service) NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) ([]domain.Transaction, error) {
+func (s *service) NewUser(codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error) {
 	lastId, err := s.repo.LastId()
 	if err != nil {
-		return []domain.Transaction{}, err
+		return domain.Transaction{}, err
 	}
 	lastId++
 	ts, err := s.repo.NewUser(lastId, codigo, moneda, monto, emisor, receptor, fecha)

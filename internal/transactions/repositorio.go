@@ -8,8 +8,8 @@ import (
 )
 
 type Repository interface {
-	GetAll() []domain.Transaction
-	NewUser(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) ([]domain.Transaction, error)
+	GetAll() ([]domain.Transaction, error)
+	NewUser(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error)
 	Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error)
 	Delete(id int) error
 	UpdateCodigoAndMonto(id int, codigo string, monto int) (domain.Transaction, error)
@@ -26,10 +26,13 @@ func NewRepository(db store.Store) Repository {
 	}
 }
 
-func (repo *repository) GetAll() []domain.Transaction {
+func (repo *repository) GetAll() ([]domain.Transaction, error) {
 	var ts []domain.Transaction
-	repo.db.Read(&ts)
-	return ts
+	err := repo.db.Read(&ts)
+	if err != nil {
+		return nil, err
+	}
+	return ts, nil
 }
 
 func (repo *repository) LastId() (int, error) {
@@ -43,16 +46,28 @@ func (repo *repository) LastId() (int, error) {
 	return ts[len(ts)-1].Id, nil
 }
 
-func (repo *repository) NewUser(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) ([]domain.Transaction, error) {
+func (repo *repository) NewUser(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error) {
 
 	var ts []domain.Transaction
-	repo.db.Read(&ts)
-	t := domain.Transaction{id, codigo, moneda, monto, emisor, receptor, fecha, true}
+	err := repo.db.Read(&ts)
+	if err != nil {
+		return domain.Transaction{}, err
+	}
+	t := domain.Transaction{
+		Id:       id,
+		Codigo:   codigo,
+		Moneda:   moneda,
+		Monto:    monto,
+		Emisor:   emisor,
+		Receptor: receptor,
+		Fecha:    fecha,
+		Estado:   true,
+	}
 	ts = append(ts, t)
 	if err := repo.db.Write(ts); err != nil {
-		return []domain.Transaction{}, err
+		return domain.Transaction{}, err
 	}
-	return ts, nil
+	return t, nil
 }
 
 func (repo *repository) Update(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (domain.Transaction, error) {
@@ -66,7 +81,10 @@ func (repo *repository) Update(id int, codigo string, moneda string, monto int, 
 	}
 	updated := false
 	var ts []domain.Transaction
-	repo.db.Read(&ts)
+	err := repo.db.Read(&ts)
+	if err != nil {
+		return domain.Transaction{}, err
+	}
 	for i := range ts {
 		if ts[i].Id == id {
 			t.Id = id
@@ -86,7 +104,10 @@ func (repo *repository) Update(id int, codigo string, moneda string, monto int, 
 func (repo *repository) Delete(id int) error {
 	deleted := false
 	var ts []domain.Transaction
-	repo.db.Read(&ts)
+	err := repo.db.Read(&ts)
+	if err != nil {
+		return err
+	}
 	for i := range ts {
 		if ts[i].Id == id {
 			deleted = true
@@ -106,7 +127,10 @@ func (repo *repository) UpdateCodigoAndMonto(id int, codigo string, monto int) (
 	var t domain.Transaction
 	updated := false
 	var ts []domain.Transaction
-	repo.db.Read(&ts)
+	err := repo.db.Read(&ts)
+	if err != nil {
+		return domain.Transaction{}, err
+	}
 	for i := range ts {
 		if ts[i].Id == id {
 			ts[i].Codigo = codigo

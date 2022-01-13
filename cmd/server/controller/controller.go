@@ -71,7 +71,7 @@ func (t *Transaction) ValidateToken() gin.HandlerFunc {
 // @Router / [get]
 func (c *Transaction) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		t := c.service.GetAll()
+		t, _ := c.service.GetAll()
 		ctx.JSON(200, web.NewResponse(200, t, nil))
 	}
 }

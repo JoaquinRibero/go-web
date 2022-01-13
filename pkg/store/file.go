@@ -15,13 +15,36 @@ type Type string
 
 type FileStore struct {
 	FileName string
+	Mock     *Mock
+}
+
+type Mock struct {
+	Data []byte
+	Err  error
 }
 
 const (
 	FileType Type = "filestorage"
+	TestType Type = "teststorage"
 )
 
+func (fs *FileStore) AddMock(mock *Mock) {
+	fs.Mock = mock
+}
+
+func (fs *FileStore) ClearMock(mock *Mock) {
+	fs.Mock = nil
+}
+
 func (fs *FileStore) Read(data interface{}) error {
+
+	if fs.Mock != nil {
+		if fs.Mock.Err != nil {
+			return fs.Mock.Err
+		}
+		return json.Unmarshal(fs.Mock.Data, data)
+	}
+
 	file, err := os.ReadFile(fs.FileName)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) { //controlo que el error no sea porque no existe el archivo.
@@ -33,6 +56,14 @@ func (fs *FileStore) Read(data interface{}) error {
 }
 
 func (fs *FileStore) Write(data interface{}) error {
+
+	if fs.Mock != nil {
+		if fs.Mock.Err != nil {
+			return fs.Mock.Err
+		}
+		return nil
+	}
+
 	file, err := json.MarshalIndent(data, "", " ")
 	if err != nil {
 		return err
@@ -51,7 +82,7 @@ func (fs *FileStore) Write(data interface{}) error {
 func New(store Type, fileName string) Store {
 	switch store {
 	case FileType:
-		return &FileStore{fileName}
+		return &FileStore{fileName, nil}
 	}
 	return nil
 }
