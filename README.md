@@ -1,1 +1,1 @@
-![cod cov](http://$SOME_BACKET.storage.googleapis.com/$PROJECT_NAME/codcov.svg)
+![cod cov](http://$SOME_BUCKET.storage.googleapis.com/$PROJECT_NAME/codcov.svg)
